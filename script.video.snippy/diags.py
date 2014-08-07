@@ -15,7 +15,7 @@ class InputBox(gui.AddonDialogWindow):
         super(InputBox, self).__init__(title)
         self.setGeometry(350, 150, 2, 2)
        
-        self.editBox = gui.Edit(label="hi")
+        self.editBox = gui.Edit("")
         self.placeControl(self.editBox, 0, 0, columnspan=2)
         
         confirmBtn = gui.Button("Confirm")

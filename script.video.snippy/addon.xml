@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="123456" name="Snippy" version="0.1.1" provider-name="cascade256">
+<addon id="15346186" name="Snippy" version="0.1.1" provider-name="cascade256">
   <requires>
   </requires>
   <extension point="xbmc.python.script" library="addon.py">

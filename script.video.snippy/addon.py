@@ -81,8 +81,6 @@ class MainWindow(gui.BlankDialogWindow):
         columns = 10
         self.setGeometry(1280, 720, rows + 1, columns)
         
-        label = gui.Label('This is a window.', alignment = gui.ALIGN_CENTER)
-        
         exitBtn = gui.Button("exit")
         self.placeControl(exitBtn,rows,0)
         self.connect(exitBtn, close)
@@ -130,6 +128,7 @@ class MainWindow(gui.BlankDialogWindow):
         
 class MyMonitor(xbmc.Monitor):
     def onAbortRequested():
+        global quit
         quit = True
 
         
