@@ -31,15 +31,24 @@ def endEdit():
     global editing
     if(editing):
         editing = False
-        global edits
-        global startTime
+        #save the end time of the edit before showing the popup for 
+        #selecting the type of edit
         global endTime
         endTime = player.getTime()
-        #this always lists the edit as a cut, ideally change to a pop-up
-        edits.append(Edit(startTime, endTime, 0))
-        #printEdits()
+        player.pause()
+        global selectType
+        selectType = diags.SelectEditTypeBox("")
+        selectType.showPopUp(addEdit)
     else:
         print "Snippy: end edit, but was not editing"
+def addEdit(type):
+    if(type > -1 and type < 4):
+        global startTime
+        global endTime
+        global edits
+        edits.append(Edit(startTime, endTime, type))
+    else:
+        print "Snippy: something went wrong selecting the type"
 def printEdits():
     global edits
     for edit in edits:
@@ -135,6 +144,7 @@ class MyMonitor(xbmc.Monitor):
         
 window = MainWindow()
 input = diags.InputBox("Save")
+selectType = diags.SelectEditTypeBox("")
 messagebox = diags.MessageBox("", "")
 player.onPlayBackStarted(openMainWindow)
 player.init()
