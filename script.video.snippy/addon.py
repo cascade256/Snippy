@@ -16,74 +16,76 @@ endTime = 0
     #3 - Commercial Break
 editType = 0
 def close():
+    global window, quit
     print "Snippy: exiting"
-    global window
     window.close()
-    global quit
     quit = True
+    
 def startEdit():
+    global editing, startTime
     print "Snippy: start edit"
-    global editing
     editing = True
-    global startTime
     startTime = player.getTime()
     showNotification("Snippy", "Started edit", 1500)
+    
 def endEdit():
+    global editing, endTime, selectType
     print "Snippy: end edit"
-    global editing
     if(editing):
         editing = False
         #save the end time of the edit before showing the popup for 
         #selecting the type of edit
-        global endTime
         endTime = player.getTime()
         player.pause()
-        global selectType
         selectType = diags.SelectEditTypeBox("")
         selectType.showPopUp(addEdit)
         refreshWindow()
     else:
         print "Snippy: end edit, but was not editing"
+        
 def addEdit(type):
     if(type > -1 and type < 4):
-        global startTime
-        global endTime
-        global edits
+        global startTime, endTime, edits
         edits.append(Edit(startTime, endTime, type))
     else:
         print "Snippy: something went wrong selecting the type"
+        
 def printEdits():
     global edits
     for edit in edits:
         print "!" + str(edit.startTime) + ", " + str(edit.endTime)
 
 def saveEDL(location):
+    global edits, messagebox
     print "Snippy: saving"
     try:
         f = open(location, "w+")
-        global edits
         for edit in edits:
             f.write(str(edit.startTime) + ' ' + str(edit.endTime) + 
                 ' ' + str(edit.type) + '\n')
     except Exception, e:
-        global messagebox
         messagebox = diags.MessageBox("Error", "Was unable to save, check the path")
         messagebox.doModal()
         print "Snippy: There was a problem saving the edl"
+        
 def openSaveWindow():
     global input
     input.showPopUp(saveEDL)
+    
 def openMainWindow():
     global window
     timeline.init(window, player.getTotalTime())
     window.doModal()
+    
 def refreshWindow():
     global window, edits
     window.close()
     timeline.refresh(edits)
     window.doModal()
+    
 def showNotification(title, message, time):
     xbmc.executebuiltin("Notification(%s, %s, %d)"%(title,message,time))
+    
 class Edit:
     def __init__(self, startTime, endTime, type):
         self.startTime = startTime
@@ -153,27 +155,7 @@ class MyMonitor(xbmc.Monitor):
     def onAbortRequested(self):
         global quit
         quit = True
-
         
-class MinWindow(xbmcgui.WindowDialog):
-    def exit():
-        global quit
-        quit = True
-        self.close()
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        
-        exit = xbmcgui.ControlButton(200,300,100,100,"exit")
-        self.addControl(exit)
-        
-        line = xbmcgui.ControlImage(x=100,y=250, width=300, height=100, filename="line.png")
-        line.setColorDiffuse("0x33FF00")
-        self.addControl(line)
-        
-    def onControl(self, control):
-        exit()
-        
-global window
 window = MainWindow()
 input = diags.InputBox("Save")
 selectType = diags.SelectEditTypeBox("")
