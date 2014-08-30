@@ -27,6 +27,7 @@ def startEdit():
     editing = True
     global startTime
     startTime = player.getTime()
+    showNotification("Snippy", "Started edit", 1500)
 def endEdit():
     print "Snippy: end edit"
     global editing
@@ -81,6 +82,8 @@ def refreshWindow():
     window.close()
     timeline.refresh(edits)
     window.doModal()
+def showNotification(title, message, time):
+    xbmc.executebuiltin("Notification(%s, %s, %d)"%(title,message,time))
 class Edit:
     def __init__(self, startTime, endTime, type):
         self.startTime = startTime
@@ -180,6 +183,7 @@ player.init()
 monitor = MyMonitor()
         
 if __name__ == "__main__":
+    showNotification("Snippy", "Started ready for you to start your video", 4000)
     while quit == False:
         print 'Snippy: running'
         xbmc.sleep(2000)
