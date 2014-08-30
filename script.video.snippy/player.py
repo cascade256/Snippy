@@ -29,6 +29,8 @@ def jumpBackLong():
 def onPlayBackStarted(callback):
     global onPlayBackStartedCallback
     onPlayBackStartedCallback = callback
+def getTotalTime():
+    return player.getTotalTime()
 
 def init():
     global player

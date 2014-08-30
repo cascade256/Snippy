@@ -1,7 +1,8 @@
 import pyxbmct.addonwindow as gui
-import xbmc
+import xbmc, xbmcgui, xbmcaddon
 import diags
 import player
+import timeline
 
 quit = False
 edits = []
@@ -39,6 +40,7 @@ def endEdit():
         global selectType
         selectType = diags.SelectEditTypeBox("")
         selectType.showPopUp(addEdit)
+        refreshWindow()
     else:
         print "Snippy: end edit, but was not editing"
 def addEdit(type):
@@ -53,6 +55,7 @@ def printEdits():
     global edits
     for edit in edits:
         print "!" + str(edit.startTime) + ", " + str(edit.endTime)
+
 def saveEDL(location):
     print "Snippy: saving"
     try:
@@ -71,6 +74,12 @@ def openSaveWindow():
     input.showPopUp(saveEDL)
 def openMainWindow():
     global window
+    timeline.init(window, player.getTotalTime())
+    window.doModal()
+def refreshWindow():
+    global window, edits
+    window.close()
+    timeline.refresh(edits)
     window.doModal()
 class Edit:
     def __init__(self, startTime, endTime, type):
@@ -79,11 +88,14 @@ class Edit:
         self.type = type
     def __str__(self):
         return str(self.startTime) + str(self.endTime) + str(type)
+
 class MainWindow(gui.BlankDialogWindow):
     def exit():
         global quit
         quit = True
         self.close()
+    #def onAction(self, action):
+        #print action.getButtonCode()
     def __init__(self):
         super(MainWindow, self).__init__()
         rows = 11
@@ -121,7 +133,6 @@ class MainWindow(gui.BlankDialogWindow):
         self.connect(forwardLongBtn, player.jumpForwardLong)
         
         
-        
         #edit buttons
         startEditBtn = gui.Button("start Edit")
         self.placeControl(startEditBtn, rows, 7)
@@ -133,15 +144,33 @@ class MainWindow(gui.BlankDialogWindow):
         
         saveEditBtn = gui.Button("save Edits")
         self.placeControl(saveEditBtn, rows, 9)
-        self.connect(saveEditBtn, openSaveWindow)
+        self.connect(saveEditBtn, openSaveWindow)        
         
 class MyMonitor(xbmc.Monitor):
-    def onAbortRequested():
+    def onAbortRequested(self):
         global quit
         quit = True
 
         
+class MinWindow(xbmcgui.WindowDialog):
+    def exit():
+        global quit
+        quit = True
+        self.close()
+    def __init__(self):
+        super(MainWindow, self).__init__()
         
+        exit = xbmcgui.ControlButton(200,300,100,100,"exit")
+        self.addControl(exit)
+        
+        line = xbmcgui.ControlImage(x=100,y=250, width=300, height=100, filename="line.png")
+        line.setColorDiffuse("0x33FF00")
+        self.addControl(line)
+        
+    def onControl(self, control):
+        exit()
+        
+global window
 window = MainWindow()
 input = diags.InputBox("Save")
 selectType = diags.SelectEditTypeBox("")
@@ -153,5 +182,5 @@ monitor = MyMonitor()
 if __name__ == "__main__":
     while quit == False:
         print 'Snippy: running'
-        xbmc.sleep(1000)
+        xbmc.sleep(2000)
     print "Snippy: quitting"
